@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app01/pages/sign_up.dart';
 import 'pages/login.dart';
+import 'pages/sign_up.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,6 +20,10 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LoginPage(),
+      routes: {
+        "login":(context)=>LoginPage(),
+        "signup":(context)=>SignUpPage()
+      },
     );
   }
 }

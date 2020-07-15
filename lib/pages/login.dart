@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../widgets/circle.dart';
 import '../widgets/input_text.dart';
+import 'package:flutter/services.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -9,6 +10,20 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  }
+
+  _submit(){
+ _formKey.currentState.validate();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -23,6 +38,17 @@ class _LoginPageState extends State<LoginPage> {
           height: size.height,
           child: Stack(
             children: <Widget>[
+              Positioned(
+                left: -size.width*.25,
+                top: -size.width*.25,
+                child:  Circle(
+                  radio: size.width*.45,
+                  colors: [
+                    Colors.cyan,
+                    Colors.cyanAccent
+                  ],
+                ),
+              ),
               Positioned(
                 right: -size.width*.22,
                 top: -size.width*.35,
@@ -82,16 +108,32 @@ class _LoginPageState extends State<LoginPage> {
                                       maxWidth: 350,
                                       minWidth: 350
                                   ),
-                                  child: Form(child: Column(
+                                  child: Form(
+                                      key: _formKey,
+                                      child: Column(
                                     children: <Widget>[
-                                      InputText(label: "EMAIL ADDRESS"),
+                                      InputText(label: "EMAIL ADDRESS",
+                                        inputType: TextInputType.emailAddress,
+                                        validator: (String text){
+                                        if(text.contains("@")){
+                                          return null;
+                                        }
+                                        return "Invalid Email";
+                                      },),
                                       SizedBox(height: 30),
-                                      InputText(label: "PASSWORD")
+                                      InputText(label: "PASSWORD",
+                                          isSecure: true
+                                          ,validator: (String text){
+                                        if(text.isNotEmpty && text.length>5){
+                                          return null;
+                                        }
+                                        return "Invalid Password";
+                                      },)
                                     ],
                                   )
                                   )
                               ),
-                              SizedBox(height: 40),
+                              SizedBox(height: 50),
                               ConstrainedBox(
                                 constraints: BoxConstraints(
                                     maxWidth: 350,
@@ -101,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                                   padding: EdgeInsets.symmetric(vertical: 17),
                                   color: Colors.cyan,
                                   borderRadius: BorderRadius.circular(6),
-                                  onPressed: (){},
+                                  onPressed: () => _submit(),
                                   child: Text("Sign In",style: TextStyle(fontSize: 20)),
                                 ),
                               ),
@@ -111,11 +153,12 @@ class _LoginPageState extends State<LoginPage> {
                                 children: <Widget>[
                                   Text("New friend?",style: TextStyle(fontSize: 16,color: Colors.black54)),
                                   CupertinoButton(
-                                    onPressed: (){},
+                                    onPressed: ()=> Navigator.pushNamed(context, "signup"),
                                     child: Text("Sign Up",style: TextStyle(fontSize: 16,color: Colors.cyan)),
                                   )
                                 ],
-                              )
+                              ),
+                              SizedBox(height: size.height*0.08,)
                             ],
                           )
                         ],
