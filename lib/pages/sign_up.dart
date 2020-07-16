@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_app01/api/auth_api.dart';
 import '../widgets/circle.dart';
 import '../widgets/input_text.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,8 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
 
   final _formKey = GlobalKey<FormState>();
+  final _authAPI = AuthAPI();
+  var _username='',_email='',_password = '';
 
   @override
   void initState() {
@@ -20,8 +23,14 @@ class _SignUpPageState extends State<SignUpPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   }
 
-  _submit(){
-    _formKey.currentState.validate();
+  _submit() async{
+    final isValid = _formKey.currentState.validate();
+    if(isValid){
+      final isOk = await _authAPI.register(username:_username,email: _email,password: _password);
+      if(isOk){
+        print("REGISTER");
+      }
+    }
   }
 
   @override
@@ -115,6 +124,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                             InputText(label: "USERNAME",
                                               validator: (String text){
                                                 if(RegExp(r'^[a-zA-Z0-9]+$').hasMatch(text)){
+                                                  _username = text;
                                                   return null;
                                                 }
                                                 return "Invalid Username";
@@ -124,6 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                               inputType: TextInputType.emailAddress,
                                               validator: (String text){
                                                 if(text.contains("@")){
+                                                  _email = text;
                                                   return null;
                                                 }
                                                 return "Invalid Email";
@@ -133,6 +144,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                               isSecure: true
                                               ,validator: (String text){
                                                 if(text.isNotEmpty && text.length>5){
+                                                  _password = text;
                                                   return null;
                                                 }
                                                 return "Invalid Password";
